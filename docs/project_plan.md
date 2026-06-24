@@ -1,22 +1,49 @@
 # AquaMind AI
 
-## Goal
-Create an AI-powered monitoring and optimization platform for solar-assisted desalination systems.
+## Project Goal
 
-## Version 1
-- User input
-- Water production simulation
-- Efficiency calculation
+Develop an AI-powered monitoring, prediction, and optimization platform for solar-assisted desalination systems.
 
-## Version 2
-- Recommendation engine
-- Dataset generation
+## Completed Features
 
-## Version 3
-- Machine learning predictions
+### Version 1
 
-## Version 4
-- Interactive dashboard
+* Environmental condition inputs
+* Water production simulation
+* Efficiency estimation
 
-## Version 5
-- Final report and presentation
+### Version 2
+
+* Dataset generation
+* CSV data storage
+* Data analysis using pandas
+* Data visualization using matplotlib
+
+### Version 3
+
+* Machine learning prediction model
+* Water production forecasting
+
+## Upcoming Features
+
+### Version 4
+
+* Interactive prediction interface
+* Recommendation engine
+* Performance insights
+
+### Version 5
+
+* Streamlit dashboard
+* Interactive visualizations
+* User-friendly controls
+
+### Version 6
+
+* Research-based desalination model
+* More realistic engineering equations
+* Improved scientific accuracy
+
+## Long-Term Goal
+
+Create a professional AI-powered desalination optimization platform suitable for presentation in university applications, competitions, and STEM portfolios.
