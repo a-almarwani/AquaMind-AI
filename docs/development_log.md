@@ -28,3 +28,18 @@
 * Added user input for environmental and water-quality conditions.
 * Implemented machine learning-based water production prediction.
 * Added efficiency estimation and engineering recommendations.
+
+## 28 June 2026
+
+* Developed the first production-ready Streamlit dashboard (`app.py`).
+* Redesigned the user interface with a cleaner, more professional layout.
+* Connected the trained Linear Regression model to the dashboard.
+* Added interactive sliders for temperature, humidity, solar intensity, and salinity.
+* Displayed predicted freshwater production in litres per day.
+* Added a normalized Performance Index for comparing operating conditions.
+* Replaced the system status indicator with Production Potential (High, Moderate, or Low).
+* Simplified the dashboard by removing engineering recommendations and exploratory visualizations.
+* Added an Input Summary section displaying the selected operating conditions.
+* Added an AI Insights section as a placeholder for future explainable AI and optimization features.
+* Captured representative dashboard screenshots for project documentation.
+* Defined the future direction of AquaMind AI as an independent AI platform for solar desalination performance prediction and optimization rather than a dashboard specifically for the QatarAT prototype.
