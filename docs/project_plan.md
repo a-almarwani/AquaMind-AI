@@ -2,9 +2,9 @@
 
 ## Project Direction
 
-AquaMind AI is an AI-powered platform for predicting and analyzing the performance of solar desalination systems.
+AquaMind AI is an AI-powered platform for predicting, analyzing, and eventually optimizing the performance of solar desalination systems.
 
-The long-term vision is to develop AquaMind AI into an intelligent decision-support and design optimization platform that assists researchers, engineers, educators, and students in evaluating and improving solar desalination system performance.
+The long-term vision is to develop AquaMind AI into an intelligent engineering platform that combines physics-based simulation and artificial intelligence to assist researchers, engineers, educators, and students in evaluating, designing, and improving solar desalination systems.
 
 ---
 
@@ -14,16 +14,17 @@ Solar desalination performance depends on multiple environmental and engineering
 
 Estimating freshwater production and understanding how different variables affect system performance can be difficult without simulation or experimentation.
 
-AquaMind AI aims to simplify this process by using machine learning to predict system performance and, in future versions, assist with engineering design optimization.
+AquaMind AI aims to simplify this process by combining engineering simulation with machine learning to predict system performance, support engineering design decisions, and ultimately optimize solar desalination systems.
 
 ---
 
 ## Project Goal
 
-Develop an AI-powered platform capable of:
+Develop an AI-powered engineering platform capable of:
 
 * Predicting freshwater production.
 * Assessing desalination system performance.
+* Simulating engineering behaviour using research-based models.
 * Assisting with engineering design decisions.
 * Supporting research and education in sustainable water production.
 
@@ -44,7 +45,8 @@ Develop an AI-powered platform capable of:
 
 * Plotly
 * SHAP (Explainable AI)
-* XGBoost / Random Forest
+* Random Forest
+* XGBoost
 * Research-based engineering models
 
 ---
@@ -85,31 +87,46 @@ Develop an AI-powered platform capable of:
 * Performance Index
 * Improved user interface
 * AI Insights placeholder
-* Project documentation and dashboard screenshots
+* Project documentation
+* Dashboard screenshots
+
+### Version 6 – Engineering Foundation
+
+* Centralized physical constants module (`constants.py`)
+* Engineering simulation module (`engineering_model.py`)
+* Modular engineering calculation framework
+* Solar energy calculations
+* Absorbed solar energy calculations
+* Water volume calculations
+* Water mass calculations
+* Absorbed energy calculations
+* Initial thermodynamic modelling using `Q = mcΔT`
 
 ---
 
 ## Future Development
 
-### Version 6 – Engineering Design Platform
+### Version 6 – Research-Based Engineering Model (Current)
 
+* Literature review of basin-type solar stills
+* Implementation of a published engineering model
+* Research-based heat transfer equations
 * Engineering design parameters
-
   * Basin area
   * Feedwater volume
   * Water depth
   * Collector area
   * Condenser area
-  * Operation duration
-* Research-based desalination datasets
+  * Operating duration
+* Research-based dataset generation
 * Explainable AI (XAI)
-* Design optimization
+* Engineering design optimization
 * Support for multiple solar desalination technologies
 
 ### Version 7 – Advanced Intelligence
 
-* Advanced machine learning models
-* Model comparison
+* Random Forest and XGBoost models
+* Machine learning model comparison
 * Prediction uncertainty estimation
 * AI-assisted engineering recommendations
 * Automated design optimization
@@ -118,7 +135,7 @@ Develop an AI-powered platform capable of:
 
 ## Current Status
 
-**Current Version:** Version 5
+**Current Version:** Version 6 – Engineering Foundation
 
 ### Implemented
 
@@ -130,18 +147,21 @@ Develop an AI-powered platform capable of:
 * Production Potential assessment
 * Performance Index
 * Data analysis and visualization
-* Git and GitHub version control
+* Engineering simulation framework
+* Physical constants module
+* Core engineering calculations
 * Modular project structure
 * Project documentation
+* Git and GitHub version control
 
 ### Next Milestone
 
-Transform AquaMind AI from a performance prediction tool into an engineering platform by incorporating engineering design parameters, research-based datasets, and explainable AI.
+Implement a validated research-based engineering model for a basin-type solar still using published thermal and heat-transfer equations before generating the next machine learning dataset.
 
 ---
 
 ## Long-Term Vision
 
-AquaMind AI is intended to become an intelligent engineering platform capable of predicting, analyzing, and eventually optimizing the performance of a wide range of solar desalination systems.
+AquaMind AI is intended to become an intelligent engineering platform capable of simulating, predicting, analyzing, and ultimately optimizing the performance of a wide range of solar desalination technologies.
 
-The project is designed to demonstrate the integration of artificial intelligence, software engineering, and sustainable engineering while serving as a long-term portfolio project for university applications, STEM competitions, and future research.
+The project will integrate physics-based engineering simulation, artificial intelligence, machine learning, and software engineering to support sustainable water production while serving as a long-term portfolio project for university applications, STEM competitions, and future research.

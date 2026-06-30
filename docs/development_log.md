@@ -43,3 +43,18 @@
 * Added an AI Insights section as a placeholder for future explainable AI and optimization features.
 * Captured representative dashboard screenshots for project documentation.
 * Defined the future direction of AquaMind AI as an independent AI platform for solar desalination performance prediction and optimization rather than a dashboard specifically for the QatarAT prototype.
+
+## 30 June 2026
+
+* Began Version 6, laying the engineering foundation for AquaMind AI.
+* Created `constants.py` to centralize physical constants used throughout the engineering model.
+* Created `engineering_model.py` as the foundation for the new engineering simulation module.
+* Implemented `calculate_solar_energy()` to calculate incoming solar power.
+* Implemented `calculate_absorbed_solar_energy()` to estimate the solar power absorbed by the basin.
+* Implemented `calculate_water_volume()` and `calculate_water_mass()` to model basin geometry and water properties.
+* Implemented `calculate_absorbed_energy()` to convert absorbed solar power into total energy over the operating period.
+* Implemented `calculate_water_temperature_increase()` using the thermodynamic equation `Q = mcΔT` as an ideal learning model.
+* Applied modular software engineering practices including reusable functions, input validation, centralized constants, and comprehensive documentation.
+* Identified that the ideal temperature model produces unrealistic results because it neglects convective, radiative, and evaporative heat losses.
+* Decided to replace simplified engineering assumptions with a research-based thermal model using published solar desalination literature.
+* Established the Version 6 development strategy of implementing a validated engineering model before generating a new machine learning dataset.
