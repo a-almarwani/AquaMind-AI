@@ -58,3 +58,16 @@
 * Identified that the ideal temperature model produces unrealistic results because it neglects convective, radiative, and evaporative heat losses.
 * Decided to replace simplified engineering assumptions with a research-based thermal model using published solar desalination literature.
 * Established the Version 6 development strategy of implementing a validated engineering model before generating a new machine learning dataset.
+
+## 1 July 2026
+
+* Continued Version 6 by beginning the research-based engineering model for AquaMind AI.
+* Implemented `calculate_saturation_vapor_pressure()` to estimate the saturation vapor pressure of water.
+* Implemented the Dunkle (1961) convective heat transfer coefficient.
+* Implemented convective heat transfer calculations between the basin water surface and glass cover.
+* Implemented evaporative heat transfer calculations using the Dunkle model.
+* Implemented distilled water production calculations using the latent heat of vaporization.
+* Added a helper function to convert distilled water mass into freshwater volume in litres.
+* Successfully validated the engineering calculations using representative operating conditions.
+* Established the first complete research-based engineering pipeline from vapor pressure through heat transfer to freshwater production.
+* Decided to verify all engineering equations against the original literature before implementing radiative heat transfer and the complete thermal energy balance.
