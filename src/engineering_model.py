@@ -11,6 +11,7 @@ from constants import (
     WATER_DENSITY,
     SPECIFIC_HEAT_WATER,
     BASIN_ABSORPTIVITY,
+    LATENT_HEAT_VAPORIZATION,
 )
 
 
@@ -311,6 +312,151 @@ def calculate_convective_heat_transfer(
     print("Glass vapor pressure:", pg)
     print("Convective heat transfer coefficient:", hc)
 
+def calculate_evaporative_heat_transfer(
+    heat_transfer_coefficient,
+    basin_area,
+    water_vapor_pressure,
+    glass_vapor_pressure,
+    water_temperature_c,
+    glass_temperature_c,
+):
+    """
+    Calculate evaporative heat transfer from the basin water
+    surface to the glass cover using Dunkle's model.
+
+    Parameters
+    ----------
+    heat_transfer_coefficient : float
+        Convective heat transfer coefficient (W/m²·K)
+
+    basin_area : float
+        Basin area (m²)
+
+    water_vapor_pressure : float
+        Saturation vapor pressure at the water surface (Pa)
+
+    glass_vapor_pressure : float
+        Saturation vapor pressure at the glass cover (Pa)
+
+    water_temperature_c : float
+        Basin water temperature (°C)
+
+    glass_temperature_c : float
+        Glass cover temperature (°C)
+
+    Returns
+    -------
+    float
+        Evaporative heat transfer rate (W)
+
+    References
+    ----------
+    Dunkle, R. V. (1961). Solar water distillation.
+    """
+
+    if heat_transfer_coefficient < 0:
+        raise ValueError("Heat transfer coefficient cannot be negative.")
+
+    if basin_area <= 0:
+        raise ValueError("Basin area must be greater than zero.")
+
+    if water_vapor_pressure <= glass_vapor_pressure:
+        raise ValueError(
+            "Water vapor pressure must be greater than glass vapor pressure."
+        )
+
+    if water_temperature_c <= glass_temperature_c:
+        raise ValueError(
+            "Water temperature must be greater than glass temperature."
+        )
+
+    evaporative_heat_transfer = (
+        0.016273
+        * heat_transfer_coefficient
+        * basin_area
+        * (water_vapor_pressure - glass_vapor_pressure)
+        / (water_temperature_c - glass_temperature_c)
+    )
+
+    return evaporative_heat_transfer
+
+def calculate_distilled_water_mass(
+    evaporative_heat_transfer,
+    operating_time_hours,
+):
+    """
+    Calculate the mass of distilled water produced.
+
+    Parameters
+    ----------
+    evaporative_heat_transfer : float
+        Evaporative heat transfer rate (W)
+
+    operating_time_hours : float
+        Operating time (hours)
+
+    Returns
+    -------
+    float
+        Distilled water produced (kg)
+
+    References
+    ----------
+    Based on the latent heat of vaporization relationship used
+    in solar desalination engineering.
+    """
+
+    if evaporative_heat_transfer < 0:
+        raise ValueError(
+            "Evaporative heat transfer cannot be negative."
+        )
+
+    if operating_time_hours <= 0:
+        raise ValueError(
+            "Operating time must be greater than zero."
+        )
+
+    operating_time_seconds = operating_time_hours * 3600
+
+    evaporative_energy = (
+        evaporative_heat_transfer
+        * operating_time_seconds
+    )
+
+    distilled_water_mass = (
+        evaporative_energy
+        / LATENT_HEAT_VAPORIZATION
+    )
+
+    return distilled_water_mass
+
+def convert_water_mass_to_litres(water_mass):
+    """
+    Convert water mass to volume in litres.
+
+    Parameters
+    ----------
+    water_mass : float
+        Water mass (kg)
+
+    Returns
+    -------
+    float
+        Water volume (litres)
+
+    Note
+    ----
+    This assumes water density is approximately 1000 kg/m³,
+    so 1 kg of water is approximately 1 litre.
+    """
+
+    if water_mass < 0:
+        raise ValueError("Water mass cannot be negative.")
+
+    water_volume_litres = water_mass
+
+    return water_volume_litres
+
 if __name__ == "__main__":
     water_temperature = 60
     glass_temperature = 40
@@ -332,7 +478,28 @@ if __name__ == "__main__":
         glass_temperature,
     )
 
+    qe = calculate_evaporative_heat_transfer(
+        hc,
+        1.0,
+        pw,
+        pg,
+        water_temperature,
+        glass_temperature,
+    )
+
+    distilled_mass = calculate_distilled_water_mass(
+        qe,
+        8,
+    )
+
+    distilled_volume_litres = convert_water_mass_to_litres(
+        distilled_mass
+    )
+
     print("Water vapor pressure:", pw)
     print("Glass vapor pressure:", pg)
     print("Convective heat transfer coefficient:", hc)
     print("Convective heat transfer:", qc)
+    print("Evaporative heat transfer:", qe)
+    print("Distilled water mass:", distilled_mass)
+    print("Distilled water volume:", distilled_volume_litres)
