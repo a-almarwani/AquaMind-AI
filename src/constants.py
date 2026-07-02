@@ -16,6 +16,9 @@ LATENT_HEAT_VAPORIZATION = 2.45e6   # J/kg
 
 BASIN_ABSORPTIVITY = 0.90
 
+# Radiative properties
+
+EFFECTIVE_EMISSIVITY = 0.90
 
 # Universal constants
 
