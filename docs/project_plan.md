@@ -117,16 +117,22 @@ Develop an AI-powered engineering platform capable of:
 * Convective heat transfer coefficient (Dunkle model)
 * Convective heat transfer calculations
 * Evaporative heat transfer calculations
+* Radiative heat transfer coefficient calculations
+* Radiative heat transfer calculations
+* Total internal heat transfer calculations
+* Net thermal energy calculations
+* Updated water temperature calculations using the engineering energy balance
 * Distilled water production calculations
 * Freshwater volume calculations
-* Initial validation of engineering calculations
+* Verification of the implemented engineering equations against the published literature
+* Initial validation of the complete internal heat-transfer model
 
 #### In Progress
 
-* Verification of engineering equations against published literature
-* Radiative heat transfer
-* Complete thermal energy balance
-* Engineering model validation
+* Literature review of the complete solar still thermal energy balance
+* Water–glass coupled energy balance
+* External heat-loss modelling
+* Final engineering model validation
 
 #### Planned
 
@@ -182,7 +188,7 @@ Develop an AI-powered engineering platform capable of:
 
 ### Next Milestone
 
-Verify the implemented engineering equations against the original literature, implement radiative heat transfer, complete the thermal energy balance, and validate the full research-based engineering model before generating a new machine learning dataset.
+Complete and validate the literature-based thermal energy balance by incorporating the glass cover energy balance and external environmental heat losses. Once the engineering model has been fully validated, begin Version 6 – Phase 3 by generating a new research-based machine learning dataset.
 
 ---
 
