@@ -16,6 +16,11 @@ from constants import (
     EFFECTIVE_EMISSIVITY,
 )
 
+# =============================================================================
+# Solar Energy
+# =============================================================================
+
+# region Solar Energy
 
 def calculate_solar_energy(irradiance, basin_area):
     """
@@ -66,6 +71,46 @@ def calculate_absorbed_solar_energy(solar_power):
     absorbed_power = solar_power * BASIN_ABSORPTIVITY
 
     return absorbed_power
+
+def calculate_absorbed_energy(absorbed_power, operating_time_hours):
+    """
+    Calculate the total absorbed solar energy.
+
+    Parameters
+    ----------
+    absorbed_power : float
+        Absorbed solar power (W)
+
+    operating_time_hours : float
+        Operating time (hours)
+
+    Returns
+    -------
+    float
+        Total absorbed energy (J)
+    """
+
+    if absorbed_power < 0:
+        raise ValueError("Absorbed power cannot be negative.")
+
+    if operating_time_hours <= 0:
+        raise ValueError("Operating time must be greater than zero.")
+
+    # Convert hours to seconds
+    operating_time_seconds = operating_time_hours * 3600
+
+    absorbed_energy = absorbed_power * operating_time_seconds
+
+    return absorbed_energy
+
+# endregion
+
+
+# =============================================================================
+# Water Properties
+# =============================================================================
+
+# region Water Properties
 
 def calculate_water_volume(basin_area, water_depth_cm):
     """
@@ -120,37 +165,6 @@ def calculate_water_mass(volume):
 
     return mass
 
-def calculate_absorbed_energy(absorbed_power, operating_time_hours):
-    """
-    Calculate the total absorbed solar energy.
-
-    Parameters
-    ----------
-    absorbed_power : float
-        Absorbed solar power (W)
-
-    operating_time_hours : float
-        Operating time (hours)
-
-    Returns
-    -------
-    float
-        Total absorbed energy (J)
-    """
-
-    if absorbed_power < 0:
-        raise ValueError("Absorbed power cannot be negative.")
-
-    if operating_time_hours <= 0:
-        raise ValueError("Operating time must be greater than zero.")
-
-    # Convert hours to seconds
-    operating_time_seconds = operating_time_hours * 3600
-
-    absorbed_energy = absorbed_power * operating_time_seconds
-
-    return absorbed_energy
-
 def calculate_water_temperature_increase(
     net_energy,
     water_mass,
@@ -185,6 +199,15 @@ def calculate_water_temperature_increase(
 
     return temperature_increase
 
+# endregion
+
+
+# =============================================================================
+# Vapor Pressure
+# =============================================================================
+
+# region Vapor Pressure
+
 def calculate_saturation_vapor_pressure(temperature_c):
     """
     Calculate saturation vapor pressure of water.
@@ -212,6 +235,15 @@ def calculate_saturation_vapor_pressure(temperature_c):
     )
 
     return vapor_pressure
+
+# endregion
+
+
+# =============================================================================
+# Internal Heat Transfer
+# =============================================================================
+
+# region Internal Heat Transfer
 
 def calculate_convective_heat_transfer_coefficient(
     water_temperature_c,
@@ -389,7 +421,6 @@ def calculate_evaporative_heat_transfer(
 
     return evaporative_heat_transfer
 
-
 def calculate_radiative_heat_transfer_coefficient(
     water_temperature_c,
     glass_temperature_c,
@@ -539,65 +570,242 @@ def calculate_total_internal_heat_transfer(
 
     return total_heat_transfer
 
-def calculate_net_energy(
-    absorbed_energy,
-    total_internal_heat_transfer,
-    operating_time_hours,
+# endregion
+
+
+# =============================================================================
+# External Heat Transfer
+# =============================================================================
+
+# region External Heat Transfer
+
+def calculate_external_convective_heat_transfer_coefficient(
+    wind_speed,
 ):
     """
-    Calculate the net thermal energy available to heat the basin water.
+    Calculate the external convective heat transfer coefficient
+    between the glass cover and the ambient air.
 
     Parameters
     ----------
-    absorbed_energy : float
-        Total absorbed solar energy (J)
-
-    total_internal_heat_transfer : float
-        Total internal heat transfer rate (W)
-
-    operating_time_hours : float
-        Operating time (hours)
+    wind_speed : float
+        Wind speed (m/s)
 
     Returns
     -------
     float
-        Net thermal energy available (J)
+        External convective heat transfer coefficient (W/m²·K)
 
-    Note
-    ----
-    The total internal heat transfer rate is converted from
-    power (W) to energy (J) before calculating the remaining
-    thermal energy stored in the basin water.
+    References
+    ----------
+    Based on the empirical correlation commonly used in
+    solar still engineering literature:
+
+        h = 5.7 + 3.8V
+
+    where V is the wind speed (m/s).
     """
 
-    if absorbed_energy < 0:
-        raise ValueError("Absorbed energy cannot be negative.")
-
-    if total_internal_heat_transfer < 0:
+    if wind_speed < 0:
         raise ValueError(
-            "Total internal heat transfer cannot be negative."
+            "Wind speed cannot be negative."
         )
 
-    if operating_time_hours <= 0:
+    external_convective_heat_transfer_coefficient = (
+        5.7
+        + (3.8 * wind_speed)
+    )
+
+    return external_convective_heat_transfer_coefficient
+
+def calculate_external_convective_heat_transfer(
+    external_convective_heat_transfer_coefficient,
+    basin_area,
+    glass_temperature_c,
+    ambient_temperature_c,
+):
+    """
+    Calculate external convective heat transfer from the glass
+    cover to the ambient air.
+
+    Parameters
+    ----------
+    external_convective_heat_transfer_coefficient : float
+        External convective heat transfer coefficient (W/m²·K)
+    basin_area : float
+        Basin area (m²)
+
+    glass_temperature_c : float
+        Glass cover temperature (°C)
+
+    ambient_temperature_c : float
+        Ambient air temperature (°C)
+
+    Returns
+    -------
+    float
+        External convective heat transfer rate (W)
+    """
+
+    if external_convective_heat_transfer_coefficient < 0:
         raise ValueError(
-            "Operating time must be greater than zero."
+            "Heat transfer coefficient cannot be negative."
         )
 
-    # Convert hours to seconds
-    operating_time_seconds = operating_time_hours * 3600
+    if basin_area <= 0:
+        raise ValueError(
+            "Basin area must be greater than zero."
+        )
 
-    # Convert heat transfer rate (W) into energy (J)
-    total_heat_loss = (
-        total_internal_heat_transfer
-        * operating_time_seconds
+    if glass_temperature_c <= ambient_temperature_c:
+        raise ValueError(
+            "Glass temperature must be greater than ambient temperature."
+        )
+
+    external_convective_heat_transfer = (
+        external_convective_heat_transfer_coefficient
+        * basin_area
+        * (
+            glass_temperature_c
+            - ambient_temperature_c
+        )
     )
 
-    net_energy = (
-        absorbed_energy
-        - total_heat_loss
+    return external_convective_heat_transfer
+
+def calculate_sky_temperature(
+    ambient_temperature_c,
+):
+    """
+    Calculate the effective sky temperature.
+
+    Parameters
+    ----------
+    ambient_temperature_c : float
+        Ambient air temperature (°C)
+
+    Returns
+    -------
+    float
+        Effective sky temperature (°C)
+
+    References
+    ----------
+    Based on the commonly used approximation in
+    solar still engineering literature:
+
+        T_sky = T_ambient - 6°C
+    """
+
+    sky_temperature = (
+        ambient_temperature_c
+        - 6
     )
 
-    return net_energy
+    return sky_temperature
+
+def calculate_external_radiative_heat_transfer(
+    basin_area,
+    glass_temperature_c,
+    sky_temperature_c,
+):
+    """
+    Calculate external radiative heat transfer from the glass
+    cover to the sky.
+
+    Parameters
+    ----------
+    basin_area : float
+        Basin area (m²)
+
+    glass_temperature_c : float
+        Glass cover temperature (°C)
+
+    sky_temperature_c : float
+        Effective sky temperature (°C)
+
+    Returns
+    -------
+    float
+        External radiative heat transfer rate (W)
+
+    References
+    ----------
+    Based on the Stefan-Boltzmann law for radiative heat loss
+    from the glass cover to the effective sky temperature.
+    """
+
+    if basin_area <= 0:
+        raise ValueError(
+            "Basin area must be greater than zero."
+        )
+
+    if glass_temperature_c <= sky_temperature_c:
+        raise ValueError(
+            "Glass temperature must be greater than sky temperature."
+        )
+
+    glass_temperature_k = glass_temperature_c + 273.15
+    sky_temperature_k = sky_temperature_c + 273.15
+
+    external_radiative_heat_transfer = (
+        EFFECTIVE_EMISSIVITY
+        * STEFAN_BOLTZMANN
+        * basin_area
+        * (
+            glass_temperature_k ** 4
+            - sky_temperature_k ** 4
+        )
+    )
+
+    return external_radiative_heat_transfer
+
+def calculate_total_external_heat_loss(
+    external_convective_heat_transfer,
+    external_radiative_heat_transfer,
+):
+    """
+    Calculate the total external heat loss from the glass cover.
+
+    Parameters
+    ----------
+    external_convective_heat_transfer : float
+        External convective heat transfer (W)
+
+    external_radiative_heat_transfer : float
+        External radiative heat transfer (W)
+
+    Returns
+    -------
+    float
+        Total external heat loss (W)
+    """
+
+    if external_convective_heat_transfer < 0:
+        raise ValueError(
+            "External convective heat transfer cannot be negative."
+        )
+
+    if external_radiative_heat_transfer < 0:
+        raise ValueError(
+            "External radiative heat transfer cannot be negative."
+        )
+
+    total_external_heat_loss = (
+        external_convective_heat_transfer
+        + external_radiative_heat_transfer
+    )
+
+    return total_external_heat_loss
+
+# endregion
+
+
+# =============================================================================
+# Water Production
+# =============================================================================
+
+# region Water Production
 
 def calculate_distilled_water_mass(
     evaporative_heat_transfer,
@@ -676,12 +884,92 @@ def convert_water_mass_to_litres(water_mass):
 
     return water_volume_litres
  
+# endregion
+
+
+# =============================================================================
+# Overall Energy Balance
+# =============================================================================
+
+# region Overall Energy Balance
+
+def calculate_net_energy(
+    absorbed_energy,
+    total_internal_heat_transfer,
+    operating_time_hours,
+):
+    """
+    Calculate the net thermal energy available to heat the basin water.
+
+    Parameters
+    ----------
+    absorbed_energy : float
+        Total absorbed solar energy (J)
+
+    total_internal_heat_transfer : float
+        Total internal heat transfer rate (W)
+
+    operating_time_hours : float
+        Operating time (hours)
+
+    Returns
+    -------
+    float
+        Net thermal energy available (J)
+
+    Note
+    ----
+    The total internal heat transfer rate is converted from
+    power (W) to energy (J) before calculating the remaining
+    thermal energy stored in the basin water.
+    """
+
+    if absorbed_energy < 0:
+        raise ValueError("Absorbed energy cannot be negative.")
+
+    if total_internal_heat_transfer < 0:
+        raise ValueError(
+            "Total internal heat transfer cannot be negative."
+        )
+
+    if operating_time_hours <= 0:
+        raise ValueError(
+            "Operating time must be greater than zero."
+        )
+
+    # Convert hours to seconds
+    operating_time_seconds = operating_time_hours * 3600
+
+    # Convert heat transfer rate (W) into energy (J)
+    total_heat_loss = (
+        total_internal_heat_transfer
+        * operating_time_seconds
+    )
+
+    net_energy = (
+        absorbed_energy
+        - total_heat_loss
+    )
+
+    return net_energy
+
+# endregion
+
+
+# =============================================================================
+# Testing
+# =============================================================================
+
+# region Testing
+
 if __name__ == "__main__":
 
     # Example operating conditions
     irradiance = 800          # W/m²
     water_temperature = 60    # °C
     glass_temperature = 35    # °C
+    ambient_temperature = 30  # °C
+    wind_speed = 2.0          # m/s
     basin_area = 1.0          # m²
     water_depth_cm = 2        # cm
     operating_time = 8        # hours
@@ -692,12 +980,12 @@ if __name__ == "__main__":
         basin_area,
     )
 
-    absorbed_power = calculate_absorbed_solar_energy(
+    absorbed_solar_power = calculate_absorbed_solar_energy(
         solar_power,
     )
 
     absorbed_energy = calculate_absorbed_energy(
-        absorbed_power,
+        absorbed_solar_power,
         operating_time,
     )
 
@@ -712,96 +1000,179 @@ if __name__ == "__main__":
     )
 
     # Vapor pressures
-    pw = calculate_saturation_vapor_pressure(
+    water_vapor_pressure = calculate_saturation_vapor_pressure(
         water_temperature,
     )
 
-    pg = calculate_saturation_vapor_pressure(
+    glass_vapor_pressure = calculate_saturation_vapor_pressure(
         glass_temperature,
     )
 
-    # Convective heat transfer
-    hc = calculate_convective_heat_transfer_coefficient(
-        water_temperature,
-        glass_temperature,
-        pw,
-        pg,
+    # Internal convective heat transfer
+    convective_heat_transfer_coefficient = (
+        calculate_convective_heat_transfer_coefficient(
+            water_temperature,
+            glass_temperature,
+            water_vapor_pressure,
+            glass_vapor_pressure,
+        )
     )
 
-    qc = calculate_convective_heat_transfer(
-        hc,
-        basin_area,
-        water_temperature,
-        glass_temperature,
+    convective_heat_transfer = (
+        calculate_convective_heat_transfer(
+            convective_heat_transfer_coefficient,
+            basin_area,
+            water_temperature,
+            glass_temperature,
+        )
     )
 
     # Evaporative heat transfer
-    qe = calculate_evaporative_heat_transfer(
-        hc,
-        basin_area,
-        pw,
-        pg,
-        water_temperature,
-        glass_temperature,
+    evaporative_heat_transfer = (
+        calculate_evaporative_heat_transfer(
+            convective_heat_transfer_coefficient,
+            basin_area,
+            water_vapor_pressure,
+            glass_vapor_pressure,
+            water_temperature,
+            glass_temperature,
+        )
     )
 
-    # Radiative heat transfer
-    hr = calculate_radiative_heat_transfer_coefficient(
-        water_temperature,
-        glass_temperature,
+    # Internal radiative heat transfer
+    radiative_heat_transfer_coefficient = (
+        calculate_radiative_heat_transfer_coefficient(
+            water_temperature,
+            glass_temperature,
+        )
     )
 
-    qr = calculate_radiative_heat_transfer(
-        hr,
-        basin_area,
-        water_temperature,
-        glass_temperature,
+    radiative_heat_transfer = (
+        calculate_radiative_heat_transfer(
+            radiative_heat_transfer_coefficient,
+            basin_area,
+            water_temperature,
+            glass_temperature,
+        )
     )
 
     # Total internal heat transfer
-    qt = calculate_total_internal_heat_transfer(
-        qc,
-        qe,
-        qr,
+    total_internal_heat_transfer = (
+        calculate_total_internal_heat_transfer(
+            convective_heat_transfer,
+            evaporative_heat_transfer,
+            radiative_heat_transfer,
+        )
+    )
+
+    # External convective heat transfer
+    external_convective_heat_transfer_coefficient = (
+        calculate_external_convective_heat_transfer_coefficient(
+            wind_speed,
+        )
+    )
+
+    external_convective_heat_transfer = (
+        calculate_external_convective_heat_transfer(
+            external_convective_heat_transfer_coefficient,
+            basin_area,
+            glass_temperature,
+            ambient_temperature,
+        )
     )
 
     # Energy balance
     net_energy = calculate_net_energy(
         absorbed_energy,
-        qt,
+        total_internal_heat_transfer,
         operating_time,
     )
 
-    temperature_increase = calculate_water_temperature_increase(
-        net_energy,
-        water_mass,
+    temperature_increase = (
+        calculate_water_temperature_increase(
+            net_energy,
+            water_mass,
+        )
     )
 
     # Freshwater production
-    distilled_mass = calculate_distilled_water_mass(
-        qe,
+    distilled_water_mass = calculate_distilled_water_mass(
+        evaporative_heat_transfer,
         operating_time,
     )
 
-    distilled_volume = convert_water_mass_to_litres(
-        distilled_mass,
+    distilled_water_volume = convert_water_mass_to_litres(
+        distilled_water_mass,
+    )
+
+    # Sky temperature
+    sky_temperature = calculate_sky_temperature(
+        ambient_temperature,
+    )
+
+    external_radiative_heat_transfer = calculate_external_radiative_heat_transfer(
+        basin_area,
+        glass_temperature,
+        sky_temperature,
+    )
+
+    # Total external heat loss
+    total_external_heat_loss = (
+        calculate_total_external_heat_loss(
+            external_convective_heat_transfer,
+            external_radiative_heat_transfer,
+        )
     )
 
     # Results
     print("Solar power:", solar_power)
-    print("Absorbed solar power:", absorbed_power)
+    print("Absorbed solar power:", absorbed_solar_power)
     print("Absorbed energy:", absorbed_energy)
     print("Water volume:", water_volume)
     print("Water mass:", water_mass)
-    print("Water vapor pressure:", pw)
-    print("Glass vapor pressure:", pg)
-    print("Convective heat transfer coefficient:", hc)
-    print("Convective heat transfer:", qc)
-    print("Evaporative heat transfer:", qe)
-    print("Radiative heat transfer coefficient:", hr)
-    print("Radiative heat transfer:", qr)
-    print("Total internal heat transfer:", qt)
+    print("Water vapor pressure:", water_vapor_pressure)
+    print("Glass vapor pressure:", glass_vapor_pressure)
+    print(
+        "Convective heat transfer coefficient:",
+        convective_heat_transfer_coefficient,
+    )
+    print("Convective heat transfer:", convective_heat_transfer)
+    print("Evaporative heat transfer:", evaporative_heat_transfer)
+    print(
+        "Radiative heat transfer coefficient:",
+        radiative_heat_transfer_coefficient,
+    )
+    print("Radiative heat transfer:", radiative_heat_transfer)
+    print(
+        "Total internal heat transfer:",
+        total_internal_heat_transfer,
+    )
+    print(
+        "External convective heat transfer coefficient:",
+        external_convective_heat_transfer_coefficient,
+    )
+    print(
+        "External convective heat transfer:",
+        external_convective_heat_transfer,
+    )
     print("Net energy:", net_energy)
     print("Water temperature increase:", temperature_increase)
-    print("Distilled water mass:", distilled_mass)
-    print("Distilled water volume:", distilled_volume)
+    print("Distilled water mass:", distilled_water_mass)
+    print("Distilled water volume:", distilled_water_volume)
+
+    print(
+        "Sky temperature:",
+        sky_temperature,
+    )
+
+    print(
+        "External radiative heat transfer:",
+        external_radiative_heat_transfer,
+    )
+
+    print(
+        "Total external heat loss:",
+        total_external_heat_loss,
+    )
+
+# endregion
