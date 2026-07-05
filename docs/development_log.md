@@ -84,3 +84,17 @@
 * Successfully validated the radiative heat transfer model and the complete internal heat-transfer calculations.
 * Identified through engineering validation that the current thermal energy balance overestimates water temperature because it does not yet include the glass cover energy balance or external environmental heat losses.
 * Decided to complete the literature review and implementation of the full solar still thermal energy balance before concluding Version 6 – Phase 2.
+
+## 5 July 2026
+
+* Continued Version 6 – Phase 2 by implementing the external heat-loss model for the research-based engineering simulator.
+* Implemented `calculate_external_convective_heat_transfer_coefficient()` using a wind-speed-based empirical correlation from the solar still literature.
+* Implemented `calculate_external_convective_heat_transfer()` to model convective heat transfer from the glass cover to the ambient air.
+* Implemented `calculate_sky_temperature()` to estimate the effective sky temperature for radiative heat transfer calculations.
+* Implemented `calculate_external_radiative_heat_transfer()` using the Stefan–Boltzmann law to model radiative heat transfer from the glass cover to the sky.
+* Implemented `calculate_total_external_heat_loss()` to combine external convective and radiative heat losses.
+* Reorganized `engineering_model.py` into logical engineering sections to improve readability and maintainability.
+* Adopted a more descriptive naming convention for newly implemented external heat-transfer functions.
+* Successfully verified all newly implemented external heat-transfer calculations using representative operating conditions.
+* Confirmed that the remaining source of unrealistic water temperature predictions is the simplified overall thermal energy balance rather than the individual engineering equations.
+* Determined that the final task for Version 6 – Phase 2 is to replace the current simplified energy balance with a literature-based coupled basin–water–glass thermal energy balance.

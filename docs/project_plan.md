@@ -126,20 +126,31 @@ Develop an AI-powered engineering platform capable of:
 * Freshwater volume calculations
 * Verification of the implemented engineering equations against the published literature
 * Initial validation of the complete internal heat-transfer model
+* External convective heat transfer coefficient calculations
+* External convective heat transfer calculations
+* Effective sky temperature calculations
+* External radiative heat transfer calculations
+* Total external heat-loss calculations
+* Reorganization of the engineering model into logical functional sections
+* Independent verification of the external heat-transfer model
 
 #### In Progress
 
-* Literature review of the complete solar still thermal energy balance
-* Water–glass coupled energy balance
-* External heat-loss modelling
-* Final engineering model validation
+* Literature review of the complete coupled thermal energy balance for basin-type solar stills
+* Coupled basin, water, and glass energy balance implementation
+* Replacement of the temporary overall energy balance with a research-based thermal energy balance
+* Final engineering validation of the complete research-based simulator
 
 #### Planned
 
-* Dynamic water temperature modelling
-* Research-based dataset generation
-* Multiple operating scenarios
-* Engineering model documentation
+* Complete the literature-based coupled basin, water, and glass thermal energy balance
+* Validate physically realistic water and glass temperature predictions
+* Perform final verification of the complete engineering simulation pipeline
+* Complete Version 6 – Phase 2: Research-Based Engineering Model
+* Begin Version 6 – Phase 3: Research-Based Dataset Generation
+* Generate multiple engineering operating scenarios
+* Produce a research-based machine learning dataset
+* Expand engineering model documentation
 
 ---
 
@@ -180,7 +191,10 @@ Develop an AI-powered engineering platform capable of:
 * Engineering simulation framework
 * Physical constants module
 * Solar energy calculations
-* Heat transfer calculations
+* Water property calculations
+* Saturation vapor pressure calculations
+* Internal heat transfer calculations
+* External heat transfer calculations
 * Freshwater production calculations
 * Modular engineering architecture
 * Project documentation
