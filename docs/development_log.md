@@ -98,3 +98,16 @@
 * Successfully verified all newly implemented external heat-transfer calculations using representative operating conditions.
 * Confirmed that the remaining source of unrealistic water temperature predictions is the simplified overall thermal energy balance rather than the individual engineering equations.
 * Determined that the final task for Version 6 – Phase 2 is to replace the current simplified energy balance with a literature-based coupled basin–water–glass thermal energy balance.
+
+## 9 July 2026
+
+* Continued Version 6 – Phase 2 by reviewing the published thermal energy balance for basin-type solar stills.
+* Evaluated the current engineering model against the published governing equations.
+* Determined that the simplified steady-state energy balance is physically incomplete because it does not account for thermal energy storage.
+* Identified that the governing equations in the selected literature are transient rather than steady-state.
+* Confirmed that the water, glass cover, and basin should be modelled using coupled transient energy balance equations.
+* Evaluated an initial steady-state thermal solver prototype and determined that it does not align with the published transient formulation.
+* Removed the experimental steady-state solver in preparation for implementing the literature-based transient simulation engine.
+* Added a placeholder section for the future transient simulation engine within `engineering_model.py`.
+* Defined the architecture and implementation strategy for the transient engineering simulator.
+* Planned the implementation of the transient simulation engine before beginning Version 6 – Phase 3.

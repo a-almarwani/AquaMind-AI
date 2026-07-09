@@ -49,7 +49,7 @@ Develop an AI-powered engineering platform capable of:
 * Random Forest
 * XGBoost
 * Plotly
-* Research-based engineering models
+* Research-based transient engineering simulation
 
 ---
 
@@ -133,18 +133,20 @@ Develop an AI-powered engineering platform capable of:
 * Total external heat-loss calculations
 * Reorganization of the engineering model into logical functional sections
 * Independent verification of the external heat-transfer model
+* Literature review of the published coupled thermal energy balance for basin-type solar stills
+* Selection of the transient thermal modelling approach based on the published engineering literature
+* Definition of the architecture for the transient simulation engine
 
 #### In Progress
 
-* Literature review of the complete coupled thermal energy balance for basin-type solar stills
-* Coupled basin, water, and glass energy balance implementation
-* Replacement of the temporary overall energy balance with a research-based thermal energy balance
-* Final engineering validation of the complete research-based simulator
+* Implementation of the transient basin, water, and glass energy balance equations
+* Development of the transient thermal simulation engine
+* Validation of the complete research-based engineering simulator
 
 #### Planned
 
-* Complete the literature-based coupled basin, water, and glass thermal energy balance
-* Validate physically realistic water and glass temperature predictions
+* Complete the transient thermal simulation engine
+* Validate realistic basin, water, and glass temperature predictions
 * Perform final verification of the complete engineering simulation pipeline
 * Complete Version 6 – Phase 2: Research-Based Engineering Model
 * Begin Version 6 – Phase 3: Research-Based Dataset Generation
@@ -202,7 +204,7 @@ Develop an AI-powered engineering platform capable of:
 
 ### Next Milestone
 
-Complete and validate the literature-based thermal energy balance by incorporating the glass cover energy balance and external environmental heat losses. Once the engineering model has been fully validated, begin Version 6 – Phase 3 by generating a new research-based machine learning dataset.
+Complete and validate the transient thermal simulation engine using the published basin, water, and glass energy balance equations. Once the engineering simulator has been fully validated, begin Version 6 – Phase 3 by generating a research-based machine learning dataset for model development.
 
 ---
 

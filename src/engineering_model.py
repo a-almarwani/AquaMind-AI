@@ -957,6 +957,19 @@ def calculate_net_energy(
 
 
 # =============================================================================
+# Transient Simulation Engine
+# =============================================================================
+
+# region Transient Simulation Engine
+
+# The transient simulation engine will be implemented in
+# Version 6 – Phase 2 using the published basin, water,
+# and glass energy balance equations.
+
+# endregion
+
+
+# =============================================================================
 # Testing
 # =============================================================================
 
@@ -1124,6 +1137,13 @@ if __name__ == "__main__":
         )
     )
 
+    thermal_solution = solve_thermal_equilibrium(
+        irradiance,
+        basin_area,
+        ambient_temperature,
+        wind_speed,
+    )
+
     # Results
     print("Solar power:", solar_power)
     print("Absorbed solar power:", absorbed_solar_power)
@@ -1174,5 +1194,7 @@ if __name__ == "__main__":
         "Total external heat loss:",
         total_external_heat_loss,
     )
+
+    print("Thermal solution:", thermal_solution)
 
 # endregion
