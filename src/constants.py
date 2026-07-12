@@ -23,3 +23,8 @@ EFFECTIVE_EMISSIVITY = 0.90
 # Universal constants
 
 STEFAN_BOLTZMANN = 5.67e-8          # W/(m²·K⁴)
+
+# Simulation parameters
+
+TIME_STEP = 60                      # s
+SIMULATION_DURATION = 8 * 3600      # s

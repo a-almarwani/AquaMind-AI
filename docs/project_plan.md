@@ -136,11 +136,24 @@ Develop an AI-powered engineering platform capable of:
 * Literature review of the published coupled thermal energy balance for basin-type solar stills
 * Selection of the transient thermal modelling approach based on the published engineering literature
 * Definition of the architecture for the transient simulation engine
+* Centralized transient simulation time-step and duration parameters
+* Initial `run_transient_simulation()` framework
+* Transient simulation input validation
+* Initialization of basin, water, and glass temperatures
+* Initial water volume and water mass calculations
+* Transient time-step loop and simulation-step calculation
+* Integration of solar energy calculations into the transient loop
+* Integration of temperature-dependent vapor pressure calculations into the transient loop
+* Integration of internal heat-transfer calculations into the transient loop
+* Integration of external heat-loss calculations into the transient loop
+
 
 #### In Progress
 
-* Implementation of the transient basin, water, and glass energy balance equations
-* Development of the transient thermal simulation engine
+* Identification and verification of the exact published basin, water, and glass transient energy balance equations
+* Implementation of basin, water, and glass temperature derivatives
+* Numerical temperature updates using an appropriate time-integration method
+* Time-step freshwater production and cumulative distillate calculations
 * Validation of the complete research-based engineering simulator
 
 #### Planned

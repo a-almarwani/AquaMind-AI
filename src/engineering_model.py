@@ -14,8 +14,9 @@ from constants import (
     LATENT_HEAT_VAPORIZATION,
     STEFAN_BOLTZMANN,
     EFFECTIVE_EMISSIVITY,
+    TIME_STEP,
+    SIMULATION_DURATION,
 )
-
 # =============================================================================
 # Solar Energy
 # =============================================================================
@@ -962,9 +963,197 @@ def calculate_net_energy(
 
 # region Transient Simulation Engine
 
-# The transient simulation engine will be implemented in
-# Version 6 – Phase 2 using the published basin, water,
-# and glass energy balance equations.
+def run_transient_simulation(
+    solar_irradiance,
+    ambient_temperature,
+    wind_speed,
+    basin_area,
+    water_depth_cm,
+):
+    """
+    Run a transient simulation of a basin-type solar still.
+
+    Parameters
+    ----------
+    solar_irradiance : float
+        Solar irradiance (W/m²)
+
+    ambient_temperature : float
+        Ambient air temperature (°C)
+
+    wind_speed : float
+        Wind speed (m/s)
+
+    basin_area : float
+        Basin area (m²)
+
+    water_depth_cm : float
+        Water depth (cm)
+
+    Returns
+    -------
+    dict
+        Final simulation results.
+    """
+
+    if solar_irradiance < 0:
+        raise ValueError(
+            "Solar irradiance cannot be negative."
+        )
+
+    if wind_speed < 0:
+        raise ValueError(
+            "Wind speed cannot be negative."
+        )
+
+    if basin_area <= 0:
+        raise ValueError(
+            "Basin area must be greater than zero."
+        )
+
+    if water_depth_cm <= 0:
+        raise ValueError(
+            "Water depth must be greater than zero."
+        )
+
+    basin_temperature = ambient_temperature
+    water_temperature = ambient_temperature
+    glass_temperature = ambient_temperature
+
+    total_distilled_water = 0.0
+
+    water_volume = calculate_water_volume(
+        basin_area,
+        water_depth_cm,
+    )
+
+    water_mass = calculate_water_mass(
+        water_volume,
+    )
+
+    number_of_steps = int(
+        SIMULATION_DURATION / TIME_STEP
+    )
+
+    for step in range(number_of_steps):
+
+        current_time = step * TIME_STEP
+
+        solar_power = calculate_solar_energy(
+            solar_irradiance,
+            basin_area,
+        )
+
+        absorbed_solar_power = calculate_absorbed_solar_energy(
+            solar_power,
+        )
+
+        water_vapor_pressure = (
+            calculate_saturation_vapor_pressure(
+                water_temperature,
+            )
+        )
+
+        glass_vapor_pressure = (
+            calculate_saturation_vapor_pressure(
+                glass_temperature,
+            )
+        )
+
+        convective_heat_transfer_coefficient = (
+            calculate_convective_heat_transfer_coefficient(
+                water_temperature,
+                glass_temperature,
+                water_vapor_pressure,
+                glass_vapor_pressure,
+            )
+        )
+
+        convective_heat_transfer = (
+            calculate_convective_heat_transfer(
+                convective_heat_transfer_coefficient,
+                basin_area,
+                water_temperature,
+                glass_temperature,
+            )
+        )
+
+        evaporative_heat_transfer = (
+            calculate_evaporative_heat_transfer(
+                convective_heat_transfer_coefficient,
+                basin_area,
+                water_vapor_pressure,
+                glass_vapor_pressure,
+                water_temperature,
+                glass_temperature,
+            )
+        )
+
+        radiative_heat_transfer_coefficient = (
+            calculate_radiative_heat_transfer_coefficient(
+                water_temperature,
+                glass_temperature,
+            )
+        )
+
+        radiative_heat_transfer = (
+            calculate_radiative_heat_transfer(
+                radiative_heat_transfer_coefficient,
+                basin_area,
+                water_temperature,
+                glass_temperature,
+            )
+        )
+
+        total_internal_heat_transfer = (
+            calculate_total_internal_heat_transfer(
+                convective_heat_transfer,
+                evaporative_heat_transfer,
+                radiative_heat_transfer,
+            )
+        )
+
+        external_convective_heat_transfer_coefficient = (
+            calculate_external_convective_heat_transfer_coefficient(
+                wind_speed,
+            )
+        )
+
+        external_convective_heat_transfer = (
+            calculate_external_convective_heat_transfer(
+                external_convective_heat_transfer_coefficient,
+                basin_area,
+                glass_temperature,
+                ambient_temperature,
+            )
+        )
+
+        sky_temperature = calculate_sky_temperature(
+            ambient_temperature,
+        )
+
+        external_radiative_heat_transfer = (
+            calculate_external_radiative_heat_transfer(
+                basin_area,
+                glass_temperature,
+                sky_temperature,
+            )
+        )
+
+        total_external_heat_loss = (
+            calculate_total_external_heat_loss(
+                external_convective_heat_transfer,
+                external_radiative_heat_transfer,
+            )
+        )
+
+    return {
+        "basin_temperature": basin_temperature,
+        "water_temperature": water_temperature,
+        "glass_temperature": glass_temperature,
+        "total_distilled_water": total_distilled_water,
+        "number_of_steps": number_of_steps,
+    }
 
 # endregion
 
@@ -975,226 +1164,6 @@ def calculate_net_energy(
 
 # region Testing
 
-if __name__ == "__main__":
 
-    # Example operating conditions
-    irradiance = 800          # W/m²
-    water_temperature = 60    # °C
-    glass_temperature = 35    # °C
-    ambient_temperature = 30  # °C
-    wind_speed = 2.0          # m/s
-    basin_area = 1.0          # m²
-    water_depth_cm = 2        # cm
-    operating_time = 8        # hours
-
-    # Solar energy
-    solar_power = calculate_solar_energy(
-        irradiance,
-        basin_area,
-    )
-
-    absorbed_solar_power = calculate_absorbed_solar_energy(
-        solar_power,
-    )
-
-    absorbed_energy = calculate_absorbed_energy(
-        absorbed_solar_power,
-        operating_time,
-    )
-
-    # Water properties
-    water_volume = calculate_water_volume(
-        basin_area,
-        water_depth_cm,
-    )
-
-    water_mass = calculate_water_mass(
-        water_volume,
-    )
-
-    # Vapor pressures
-    water_vapor_pressure = calculate_saturation_vapor_pressure(
-        water_temperature,
-    )
-
-    glass_vapor_pressure = calculate_saturation_vapor_pressure(
-        glass_temperature,
-    )
-
-    # Internal convective heat transfer
-    convective_heat_transfer_coefficient = (
-        calculate_convective_heat_transfer_coefficient(
-            water_temperature,
-            glass_temperature,
-            water_vapor_pressure,
-            glass_vapor_pressure,
-        )
-    )
-
-    convective_heat_transfer = (
-        calculate_convective_heat_transfer(
-            convective_heat_transfer_coefficient,
-            basin_area,
-            water_temperature,
-            glass_temperature,
-        )
-    )
-
-    # Evaporative heat transfer
-    evaporative_heat_transfer = (
-        calculate_evaporative_heat_transfer(
-            convective_heat_transfer_coefficient,
-            basin_area,
-            water_vapor_pressure,
-            glass_vapor_pressure,
-            water_temperature,
-            glass_temperature,
-        )
-    )
-
-    # Internal radiative heat transfer
-    radiative_heat_transfer_coefficient = (
-        calculate_radiative_heat_transfer_coefficient(
-            water_temperature,
-            glass_temperature,
-        )
-    )
-
-    radiative_heat_transfer = (
-        calculate_radiative_heat_transfer(
-            radiative_heat_transfer_coefficient,
-            basin_area,
-            water_temperature,
-            glass_temperature,
-        )
-    )
-
-    # Total internal heat transfer
-    total_internal_heat_transfer = (
-        calculate_total_internal_heat_transfer(
-            convective_heat_transfer,
-            evaporative_heat_transfer,
-            radiative_heat_transfer,
-        )
-    )
-
-    # External convective heat transfer
-    external_convective_heat_transfer_coefficient = (
-        calculate_external_convective_heat_transfer_coefficient(
-            wind_speed,
-        )
-    )
-
-    external_convective_heat_transfer = (
-        calculate_external_convective_heat_transfer(
-            external_convective_heat_transfer_coefficient,
-            basin_area,
-            glass_temperature,
-            ambient_temperature,
-        )
-    )
-
-    # Energy balance
-    net_energy = calculate_net_energy(
-        absorbed_energy,
-        total_internal_heat_transfer,
-        operating_time,
-    )
-
-    temperature_increase = (
-        calculate_water_temperature_increase(
-            net_energy,
-            water_mass,
-        )
-    )
-
-    # Freshwater production
-    distilled_water_mass = calculate_distilled_water_mass(
-        evaporative_heat_transfer,
-        operating_time,
-    )
-
-    distilled_water_volume = convert_water_mass_to_litres(
-        distilled_water_mass,
-    )
-
-    # Sky temperature
-    sky_temperature = calculate_sky_temperature(
-        ambient_temperature,
-    )
-
-    external_radiative_heat_transfer = calculate_external_radiative_heat_transfer(
-        basin_area,
-        glass_temperature,
-        sky_temperature,
-    )
-
-    # Total external heat loss
-    total_external_heat_loss = (
-        calculate_total_external_heat_loss(
-            external_convective_heat_transfer,
-            external_radiative_heat_transfer,
-        )
-    )
-
-    thermal_solution = solve_thermal_equilibrium(
-        irradiance,
-        basin_area,
-        ambient_temperature,
-        wind_speed,
-    )
-
-    # Results
-    print("Solar power:", solar_power)
-    print("Absorbed solar power:", absorbed_solar_power)
-    print("Absorbed energy:", absorbed_energy)
-    print("Water volume:", water_volume)
-    print("Water mass:", water_mass)
-    print("Water vapor pressure:", water_vapor_pressure)
-    print("Glass vapor pressure:", glass_vapor_pressure)
-    print(
-        "Convective heat transfer coefficient:",
-        convective_heat_transfer_coefficient,
-    )
-    print("Convective heat transfer:", convective_heat_transfer)
-    print("Evaporative heat transfer:", evaporative_heat_transfer)
-    print(
-        "Radiative heat transfer coefficient:",
-        radiative_heat_transfer_coefficient,
-    )
-    print("Radiative heat transfer:", radiative_heat_transfer)
-    print(
-        "Total internal heat transfer:",
-        total_internal_heat_transfer,
-    )
-    print(
-        "External convective heat transfer coefficient:",
-        external_convective_heat_transfer_coefficient,
-    )
-    print(
-        "External convective heat transfer:",
-        external_convective_heat_transfer,
-    )
-    print("Net energy:", net_energy)
-    print("Water temperature increase:", temperature_increase)
-    print("Distilled water mass:", distilled_water_mass)
-    print("Distilled water volume:", distilled_water_volume)
-
-    print(
-        "Sky temperature:",
-        sky_temperature,
-    )
-
-    print(
-        "External radiative heat transfer:",
-        external_radiative_heat_transfer,
-    )
-
-    print(
-        "Total external heat loss:",
-        total_external_heat_loss,
-    )
-
-    print("Thermal solution:", thermal_solution)
 
 # endregion

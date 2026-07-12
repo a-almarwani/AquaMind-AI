@@ -111,3 +111,21 @@
 * Added a placeholder section for the future transient simulation engine within `engineering_model.py`.
 * Defined the architecture and implementation strategy for the transient engineering simulator.
 * Planned the implementation of the transient simulation engine before beginning Version 6 – Phase 3.
+
+## 12 July 2026
+
+* Continued Version 6 – Phase 2 by beginning implementation of the transient simulation engine.
+* Added centralized simulation parameters for the time step and total simulation duration.
+* Set the transient simulation time step to 60 seconds and the initial simulation duration to 8 hours.
+* Implemented the initial `run_transient_simulation()` framework.
+* Added input validation for solar irradiance, wind speed, basin area, and water depth.
+* Defined the initial basin, water, and glass temperatures using the ambient temperature.
+* Calculated the initial water volume and water mass before entering the simulation loop.
+* Implemented the transient time-step loop and calculated the total number of simulation steps.
+* Integrated the existing solar power and absorbed solar power calculations into each time step.
+* Integrated temperature-dependent water and glass saturation vapor pressure calculations into the simulation loop.
+* Integrated the internal convective, evaporative, and radiative heat-transfer calculations into each time step.
+* Integrated the external convective and radiative glass heat-loss calculations into each time step.
+* Removed the previous large temporary testing section in preparation for smaller tests focused on the transient simulator.
+* Confirmed that the next implementation stage is the addition of the published basin, water, and glass transient energy balance equations.
+* Deferred meaningful thermal validation until the governing temperature-update equations are implemented.
