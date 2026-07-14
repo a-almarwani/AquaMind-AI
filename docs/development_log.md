@@ -129,3 +129,16 @@
 * Removed the previous large temporary testing section in preparation for smaller tests focused on the transient simulator.
 * Confirmed that the next implementation stage is the addition of the published basin, water, and glass transient energy balance equations.
 * Deferred meaningful thermal validation until the governing temperature-update equations are implemented.
+
+## 14 July 2026
+
+* Continued Version 6 – Phase 2 by extending the transient simulation architecture.
+* Added engineering constants describing the basin material, including basin thickness, density, and specific heat capacity.
+* Created a dedicated Basin Properties section within `engineering_model.py`.
+* Implemented `calculate_basin_volume()` to calculate the basin volume from the basin area and material thickness.
+* Implemented `calculate_basin_mass()` to calculate the basin mass using the basin volume and material density.
+* Integrated the basin volume and basin mass calculations into the transient simulation initialization.
+* Added placeholder functions for the basin, water, and glass temperature-rate calculations to support the modular transient simulation architecture.
+* Implemented the initial framework for `calculate_basin_temperature_rate()` using the transient energy balance formulation.
+* Reviewed the engineering literature and determined that the basin-to-water heat-transfer term should be implemented directly from the selected transient model rather than introduced through unsupported assumptions.
+* Confirmed that the next development stage is the implementation of the published basin, water, and glass transient energy balance equations from a single primary engineering reference.

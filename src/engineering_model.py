@@ -204,6 +204,73 @@ def calculate_water_temperature_increase(
 
 
 # =============================================================================
+# Basin Properties
+# =============================================================================
+
+# region Basin Properties
+
+def calculate_basin_volume(
+    basin_area,
+):
+    """
+    Calculate the volume of the basin.
+
+    Parameters
+    ----------
+    basin_area : float
+        Basin area (m²)
+
+    Returns
+    -------
+    float
+        Basin volume (m³)
+    """
+
+    if basin_area <= 0:
+        raise ValueError(
+            "Basin area must be greater than zero."
+        )
+
+    basin_volume = (
+        basin_area
+        * BASIN_THICKNESS
+    )
+
+    return basin_volume
+
+def calculate_basin_mass(
+    basin_volume,
+):
+    """
+    Calculate the mass of the basin.
+
+    Parameters
+    ----------
+    basin_volume : float
+        Basin volume (m³)
+
+    Returns
+    -------
+    float
+        Basin mass (kg)
+    """
+
+    if basin_volume <= 0:
+        raise ValueError(
+            "Basin volume must be greater than zero."
+        )
+
+    basin_mass = (
+        basin_volume
+        * BASIN_DENSITY
+    )
+
+    return basin_mass
+
+# endregion
+
+
+# =============================================================================
 # Vapor Pressure
 # =============================================================================
 
@@ -963,6 +1030,66 @@ def calculate_net_energy(
 
 # region Transient Simulation Engine
 
+def calculate_basin_temperature_rate(
+    absorbed_solar_power,
+    basin_to_water_heat_transfer,
+    basin_mass,
+):
+    """
+    Calculate the basin temperature rate of change.
+
+    Parameters
+    ----------
+    absorbed_solar_power : float
+        Solar power absorbed by the basin (W)
+
+    basin_to_water_heat_transfer : float
+        Heat transfer from the basin to the water (W)
+
+    basin_mass : float
+        Basin mass (kg)
+
+    Returns
+    -------
+    float
+        Basin temperature rate of change (°C/s or K/s)
+    """
+
+    if absorbed_solar_power < 0:
+        raise ValueError(
+            "Absorbed solar power cannot be negative."
+        )
+
+    if basin_to_water_heat_transfer < 0:
+        raise ValueError(
+            "Basin-to-water heat transfer cannot be negative."
+        )
+
+    if basin_mass <= 0:
+        raise ValueError(
+            "Basin mass must be greater than zero."
+        )
+
+    basin_temperature_rate = (
+        (
+            absorbed_solar_power
+            - basin_to_water_heat_transfer
+        )
+        / (
+            basin_mass
+            * BASIN_SPECIFIC_HEAT
+        )
+    )
+
+    return basin_temperature_rate
+
+def calculate_water_temperature_rate():
+    pass
+
+
+def calculate_glass_temperature_rate():
+    pass
+
 def run_transient_simulation(
     solar_irradiance,
     ambient_temperature,
@@ -1029,6 +1156,14 @@ def run_transient_simulation(
 
     water_mass = calculate_water_mass(
         water_volume,
+    )
+
+    basin_volume = calculate_basin_volume(
+        basin_area,
+    )
+
+    basin_mass = calculate_basin_mass(
+        basin_volume,
     )
 
     number_of_steps = int(

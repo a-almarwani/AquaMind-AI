@@ -12,6 +12,14 @@ SPECIFIC_HEAT_WATER = 4186          # J/(kg·K)
 
 LATENT_HEAT_VAPORIZATION = 2.45e6   # J/kg
 
+# Basin properties
+
+BASIN_THICKNESS = 0.001          # m
+
+BASIN_DENSITY = 7850             # kg/m³
+
+BASIN_SPECIFIC_HEAT = 500        # J/(kg·K)
+
 # Optical properties
 
 BASIN_ABSORPTIVITY = 0.90

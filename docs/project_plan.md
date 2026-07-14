@@ -146,11 +146,18 @@ Develop an AI-powered engineering platform capable of:
 * Integration of temperature-dependent vapor pressure calculations into the transient loop
 * Integration of internal heat-transfer calculations into the transient loop
 * Integration of external heat-loss calculations into the transient loop
-
+* Basin material property constants
+* Basin volume calculations
+* Basin mass calculations
+* Basin property module
+* Basin initialization within the transient simulator
+* Framework for basin, water, and glass temperature-rate calculations
+* Initial basin temperature-rate implementation
 
 #### In Progress
 
-* Identification and verification of the exact published basin, water, and glass transient energy balance equations
+* Selection and adoption of a primary engineering reference for the transient simulator
+* Identification and verification of the published basin, water, and glass transient energy balance equations
 * Implementation of basin, water, and glass temperature derivatives
 * Numerical temperature updates using an appropriate time-integration method
 * Time-step freshwater production and cumulative distillate calculations
@@ -158,7 +165,7 @@ Develop an AI-powered engineering platform capable of:
 
 #### Planned
 
-* Complete the transient thermal simulation engine
+* Adopt a primary transient thermal model from the engineering literature, implement the published basin, water, and glass energy balance equations, validate the transient simulator, and complete Version 6 – Phase 2 before beginning research-based dataset generation.
 * Validate realistic basin, water, and glass temperature predictions
 * Perform final verification of the complete engineering simulation pipeline
 * Complete Version 6 – Phase 2: Research-Based Engineering Model
