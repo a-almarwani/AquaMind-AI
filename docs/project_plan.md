@@ -153,20 +153,27 @@ Develop an AI-powered engineering platform capable of:
 * Basin initialization within the transient simulator
 * Framework for basin, water, and glass temperature-rate calculations
 * Initial basin temperature-rate implementation
+* Added glass material properties for the transient engineering model
+* Implemented glass volume and mass calculations
+* Implemented basin-to-water heat transfer calculations
+* Implemented basin heat loss to the ambient through insulation
+* Implemented the transient basin energy balance equation
+* Implemented the transient water energy balance equation
+* Implemented the transient glass energy balance equation
+* Refined the transient simulation architecture using a research-based energy balance approach
 
 #### In Progress
 
-* Selection and adoption of a primary engineering reference for the transient simulator
-* Identification and verification of the published basin, water, and glass transient energy balance equations
-* Implementation of basin, water, and glass temperature derivatives
-* Numerical temperature updates using an appropriate time-integration method
+* Integration of the basin, water, and glass energy balance equations into the transient simulation loop
+* Forward Euler numerical integration for transient temperature updates
 * Time-step freshwater production and cumulative distillate calculations
-* Validation of the complete research-based engineering simulator
+* Validation of the complete research-based transient engineering simulator
 
 #### Planned
 
-* Adopt a primary transient thermal model from the engineering literature, implement the published basin, water, and glass energy balance equations, validate the transient simulator, and complete Version 6 – Phase 2 before beginning research-based dataset generation.
-* Validate realistic basin, water, and glass temperature predictions
+* Complete integration of the transient simulation loop
+* Validate realistic basin, water, and glass temperature predictions against published literature
+* Remove obsolete steady-state energy balance calculations
 * Perform final verification of the complete engineering simulation pipeline
 * Complete Version 6 – Phase 2: Research-Based Engineering Model
 * Begin Version 6 – Phase 3: Research-Based Dataset Generation
@@ -214,17 +221,22 @@ Develop an AI-powered engineering platform capable of:
 * Physical constants module
 * Solar energy calculations
 * Water property calculations
+* Basin property calculations
+* Glass property calculations
 * Saturation vapor pressure calculations
 * Internal heat transfer calculations
 * External heat transfer calculations
 * Freshwater production calculations
+* Transient basin energy balance equation
+* Transient water energy balance equation
+* Transient glass energy balance equation
 * Modular engineering architecture
 * Project documentation
 * Git and GitHub version control
 
 ### Next Milestone
 
-Complete and validate the transient thermal simulation engine using the published basin, water, and glass energy balance equations. Once the engineering simulator has been fully validated, begin Version 6 – Phase 3 by generating a research-based machine learning dataset for model development.
+Complete the integration of the transient basin, water, and glass energy balance equations into the simulation loop, validate the transient engineering model against published literature, and finalize Version 6 – Phase 2 before beginning Version 6 – Phase 3: Research-Based Dataset Generation.
 
 ---
 

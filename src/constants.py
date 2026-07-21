@@ -20,6 +20,18 @@ BASIN_DENSITY = 7850             # kg/m³
 
 BASIN_SPECIFIC_HEAT = 500        # J/(kg·K)
 
+# Glass Properties
+
+GLASS_THICKNESS = 0.004          # m
+GLASS_DENSITY = 2500             # kg/m³
+GLASS_SPECIFIC_HEAT = 750        # J/(kg·K)
+
+# Insulation properties
+
+INSULATION_THICKNESS = 0.05      # m
+
+INSULATION_CONDUCTIVITY = 0.04   # W/(m·K)
+
 # Optical properties
 
 BASIN_ABSORPTIVITY = 0.90

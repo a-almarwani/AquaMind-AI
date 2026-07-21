@@ -142,3 +142,19 @@
 * Implemented the initial framework for `calculate_basin_temperature_rate()` using the transient energy balance formulation.
 * Reviewed the engineering literature and determined that the basin-to-water heat-transfer term should be implemented directly from the selected transient model rather than introduced through unsupported assumptions.
 * Confirmed that the next development stage is the implementation of the published basin, water, and glass transient energy balance equations from a single primary engineering reference.
+
+## 21 July 2026
+
+* Continued Version 6 – Phase 2 by implementing the governing equations for the transient solar still model.
+* Added engineering constants describing the glass cover, including glass thickness, density, and specific heat capacity.
+* Created a dedicated Glass Properties section within `engineering_model.py`.
+* Implemented `calculate_glass_volume()` to calculate the glass cover volume.
+* Implemented `calculate_glass_mass()` to calculate the glass cover mass.
+* Implemented `calculate_basin_to_water_heat_transfer()` to model heat transfer from the basin liner to the basin water.
+* Implemented `calculate_basin_heat_loss_to_ambient()` to model heat loss from the basin through the insulation to the surrounding environment.
+* Completed `calculate_basin_temperature_rate()` using the transient basin energy balance formulation.
+* Implemented `calculate_water_temperature_rate()` using the transient water energy balance formulation.
+* Implemented `calculate_glass_temperature_rate()` using the transient glass energy balance formulation.
+* Selected a modern published transient solar still model as the primary engineering reference for completing the transient simulator.
+* Reviewed the transient simulation architecture and determined that the remaining implementation should focus on integrating the governing equations directly within `run_transient_simulation()` rather than introducing additional helper functions.
+* Confirmed that the next development stage is the completion and validation of the transient simulation loop before beginning Version 6 – Phase 3.

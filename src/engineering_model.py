@@ -16,7 +16,16 @@ from constants import (
     EFFECTIVE_EMISSIVITY,
     TIME_STEP,
     SIMULATION_DURATION,
+    BASIN_THICKNESS,
+    BASIN_DENSITY,
+    BASIN_SPECIFIC_HEAT,
+    INSULATION_THICKNESS,
+    INSULATION_CONDUCTIVITY,
+    GLASS_THICKNESS,
+    GLASS_DENSITY,
+    GLASS_SPECIFIC_HEAT,
 )
+
 # =============================================================================
 # Solar Energy
 # =============================================================================
@@ -266,6 +275,186 @@ def calculate_basin_mass(
     )
 
     return basin_mass
+
+def calculate_basin_to_water_heat_transfer(
+    heat_transfer_coefficient,
+    basin_area,
+    basin_temperature_c,
+    water_temperature_c,
+):
+    """
+    Calculate conductive heat transfer from the basin liner
+    to the basin water.
+
+    Parameters
+    ----------
+    heat_transfer_coefficient : float
+        Basin-to-water heat transfer coefficient (W/m²·K)
+
+    basin_area : float
+        Basin area (m²)
+
+    basin_temperature_c : float
+        Basin temperature (°C)
+
+    water_temperature_c : float
+        Basin water temperature (°C)
+
+    Returns
+    -------
+    float
+        Basin-to-water heat transfer rate (W)
+    """
+
+    if heat_transfer_coefficient < 0:
+        raise ValueError(
+            "Heat transfer coefficient cannot be negative."
+        )
+
+    if basin_area <= 0:
+        raise ValueError(
+            "Basin area must be greater than zero."
+        )
+
+    if basin_temperature_c <= water_temperature_c:
+        raise ValueError(
+            "Basin temperature must be greater than water temperature."
+        )
+
+    basin_to_water_heat_transfer = (
+        heat_transfer_coefficient
+        * basin_area
+        * (
+            basin_temperature_c
+            - water_temperature_c
+        )
+    )
+
+    return basin_to_water_heat_transfer
+
+def calculate_basin_heat_loss_to_ambient(
+    basin_area,
+    basin_temperature_c,
+    ambient_temperature_c,
+    external_heat_transfer_coefficient,
+):
+    """
+    Calculate heat loss from the basin to the ambient
+    through the insulation.
+
+    Parameters
+    ----------
+    basin_area : float
+        Basin area (m²)
+
+    basin_temperature_c : float
+        Basin temperature (°C)
+
+    ambient_temperature_c : float
+        Ambient temperature (°C)
+
+    external_heat_transfer_coefficient : float
+        External heat transfer coefficient (W/m²·K)
+
+    Returns
+    -------
+    float
+        Basin heat loss to ambient (W)
+    """
+
+    if basin_area <= 0:
+        raise ValueError(
+            "Basin area must be greater than zero."
+        )
+
+    if external_heat_transfer_coefficient < 0:
+        raise ValueError(
+            "Heat transfer coefficient cannot be negative."
+        )
+
+    thermal_resistance = (
+        (INSULATION_THICKNESS / INSULATION_CONDUCTIVITY)
+        + (1 / external_heat_transfer_coefficient)
+    )
+
+    basin_heat_loss = (
+        basin_area
+        * (
+            basin_temperature_c
+            - ambient_temperature_c
+        )
+        / thermal_resistance
+    )
+
+    return basin_heat_loss
+
+# endregion
+
+
+# =============================================================================
+# Glass Properties
+# =============================================================================
+
+# region Glass Properties
+
+def calculate_glass_volume(
+    glass_area,
+):
+    """
+    Calculate the volume of the glass.
+
+    Parameters
+    ----------
+    glass_area : float
+        Glass area (m²)
+
+    Returns
+    -------
+    float
+        Glass volume (m³)
+    """
+
+    if glass_area <= 0:
+        raise ValueError(
+            "Glass area must be greater than zero."
+        )
+
+    glass_volume = (
+        glass_area
+        * GLASS_THICKNESS
+    )
+
+    return glass_volume
+
+
+def calculate_glass_mass(
+    glass_volume,
+):
+    """
+    Calculate the mass of the glass.
+
+    Parameters
+    ----------
+    glass_volume : float
+        Glass volume (m³)
+
+    Returns
+    -------
+    float
+        Glass mass (kg)
+    """
+
+    if glass_volume <= 0:
+        raise ValueError(
+            "Glass volume must be greater than zero."
+        )
+
+    glass_mass = (
+        glass_volume
+        * GLASS_DENSITY
+    )
+
+    return glass_mass
 
 # endregion
 
@@ -1033,10 +1222,11 @@ def calculate_net_energy(
 def calculate_basin_temperature_rate(
     absorbed_solar_power,
     basin_to_water_heat_transfer,
+    basin_heat_loss,
     basin_mass,
 ):
     """
-    Calculate the basin temperature rate of change.
+    Calculate the rate of change of basin temperature.
 
     Parameters
     ----------
@@ -1044,7 +1234,10 @@ def calculate_basin_temperature_rate(
         Solar power absorbed by the basin (W)
 
     basin_to_water_heat_transfer : float
-        Heat transfer from the basin to the water (W)
+        Heat transferred from the basin to the water (W)
+
+    basin_heat_loss : float
+        Heat lost from the basin to the ambient (W)
 
     basin_mass : float
         Basin mass (kg)
@@ -1052,29 +1245,22 @@ def calculate_basin_temperature_rate(
     Returns
     -------
     float
-        Basin temperature rate of change (°C/s or K/s)
+        Basin temperature rate (°C/s)
     """
-
-    if absorbed_solar_power < 0:
-        raise ValueError(
-            "Absorbed solar power cannot be negative."
-        )
-
-    if basin_to_water_heat_transfer < 0:
-        raise ValueError(
-            "Basin-to-water heat transfer cannot be negative."
-        )
 
     if basin_mass <= 0:
         raise ValueError(
             "Basin mass must be greater than zero."
         )
 
+    net_heat = (
+        absorbed_solar_power
+        - basin_to_water_heat_transfer
+        - basin_heat_loss
+    )
+
     basin_temperature_rate = (
-        (
-            absorbed_solar_power
-            - basin_to_water_heat_transfer
-        )
+        net_heat
         / (
             basin_mass
             * BASIN_SPECIFIC_HEAT
@@ -1083,12 +1269,130 @@ def calculate_basin_temperature_rate(
 
     return basin_temperature_rate
 
-def calculate_water_temperature_rate():
-    pass
+def calculate_water_temperature_rate(
+    absorbed_solar_power,
+    basin_to_water_heat_transfer,
+    convective_heat_transfer,
+    evaporative_heat_transfer,
+    radiative_heat_transfer,
+    water_mass,
+):
+    """
+    Calculate the rate of change of water temperature.
+
+    Parameters
+    ----------
+    absorbed_solar_power : float
+        Solar power absorbed by the water (W)
+
+    basin_to_water_heat_transfer : float
+        Heat transferred from the basin (W)
+
+    convective_heat_transfer : float
+        Convective heat transfer from water to glass (W)
+
+    evaporative_heat_transfer : float
+        Evaporative heat transfer (W)
+
+    radiative_heat_transfer : float
+        Radiative heat transfer (W)
+
+    water_mass : float
+        Water mass (kg)
+
+    Returns
+    -------
+    float
+        Water temperature rate (°C/s)
+    """
+
+    if water_mass <= 0:
+        raise ValueError(
+            "Water mass must be greater than zero."
+        )
+
+    net_heat = (
+        absorbed_solar_power
+        + basin_to_water_heat_transfer
+        - convective_heat_transfer
+        - evaporative_heat_transfer
+        - radiative_heat_transfer
+    )
+
+    water_temperature_rate = (
+        net_heat
+        / (
+            water_mass
+            * SPECIFIC_HEAT_WATER
+        )
+    )
+
+    return water_temperature_rate
 
 
-def calculate_glass_temperature_rate():
-    pass
+def calculate_glass_temperature_rate(
+    convective_heat_transfer,
+    evaporative_heat_transfer,
+    radiative_heat_transfer,
+    external_heat_loss,
+    glass_mass,
+    glass_specific_heat,
+):
+    """
+    Calculate the rate of change of glass temperature.
+
+    Parameters
+    ----------
+    convective_heat_transfer : float
+        Convective heat transfer from water (W)
+
+    evaporative_heat_transfer : float
+        Evaporative heat transfer from water (W)
+
+    radiative_heat_transfer : float
+        Radiative heat transfer from water (W)
+
+    external_heat_loss : float
+        Heat lost from the glass to the ambient (W)
+
+    glass_mass : float
+        Glass mass (kg)
+
+    glass_specific_heat : float
+        Specific heat capacity of glass (J/(kg·K))
+
+    Returns
+    -------
+    float
+        Glass temperature rate (°C/s)
+    """
+
+    if glass_mass <= 0:
+        raise ValueError(
+            "Glass mass must be greater than zero."
+        )
+
+    if glass_specific_heat <= 0:
+        raise ValueError(
+            "Glass specific heat must be greater than zero."
+        )
+
+    net_heat = (
+        convective_heat_transfer
+        + evaporative_heat_transfer
+        + radiative_heat_transfer
+        - external_heat_loss
+    )
+
+    glass_temperature_rate = (
+        net_heat
+        / (
+            glass_mass
+            * glass_specific_heat
+        )
+    )
+
+    return glass_temperature_rate
 
 def run_transient_simulation(
     solar_irradiance,
@@ -1164,6 +1468,16 @@ def run_transient_simulation(
 
     basin_mass = calculate_basin_mass(
         basin_volume,
+    )
+
+    glass_area = basin_area
+
+    glass_volume = calculate_glass_volume(
+        glass_area,
+    )
+
+    glass_mass = calculate_glass_mass(
+        glass_volume,
     )
 
     number_of_steps = int(
